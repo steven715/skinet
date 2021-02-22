@@ -7,12 +7,13 @@ import { map } from 'rxjs/operators';
 import { ShopParams } from '../shared/models/shopParams';
 import { IProduct } from '../shared/models/product';
 import { of } from 'rxjs';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ShopService {
-  baseUrl = 'https://localhost:5001/api/';
+  baseUrl = environment.apiUrl;
   products: IProduct[] = [];
   brands: IBrand[] = [];
   types: IType[] = [];
@@ -27,14 +28,17 @@ export class ShopService {
     }
 
     if (this.products.length > 0 && useCache === true) {
-      const pageReceived = Math.ceil(this.products.length / this.shopParams.pageSize);
+      const pageReceived = Math.ceil(
+        this.products.length / this.shopParams.pageSize
+      );
 
       if (this.shopParams.pageNumber < pageReceived) {
-        this.pagination.data = 
-          this.products.slice((this.shopParams.pageNumber - 1) * this.shopParams.pageSize,
-           this.shopParams.pageNumber * this.shopParams.pageSize);
+        this.pagination.data = this.products.slice(
+          (this.shopParams.pageNumber - 1) * this.shopParams.pageSize,
+          this.shopParams.pageNumber * this.shopParams.pageSize
+        );
 
-      return of(this.pagination);
+        return of(this.pagination);
       }
     }
 
@@ -94,7 +98,7 @@ export class ShopService {
     }
 
     return this.http.get<IBrand[]>(this.baseUrl + 'products/brands').pipe(
-      map(response => {
+      map((response) => {
         this.brands = response;
         return response;
       })
@@ -106,7 +110,7 @@ export class ShopService {
       return of(this.types);
     }
     return this.http.get<IType[]>(this.baseUrl + 'products/types').pipe(
-      map(response => {
+      map((response) => {
         this.types = response;
         return response;
       })
